@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>
+  Insegna
+  <h4>Vendor management profile</h4> 
+	</h1> 
+
+	<div class="topnav"> 
+		{% if user.is_authenticated %} 
+		<a href="#">Hi {{user.username}}</a> <br/>
+
+		{% else %} 
+		<a href="{% url 'registration' %}">Register</a> <br/>
+		<a href="{% url 'login' %}">Login</a> 
+		{% endif %} 
+	</div> 
+
+  <div>
+  	<a href="order_detail">Add products</a>
+	<br/>
+    <a href="order_detail">Edit products</a> 
+	<br/>
+    <a href="order_detail">check orders</a> 
+	<br/>
+    <a href="order_detail">delivering product(status)</a> 
+	<br/>
+    <a href="order_detail">Extra?</a> 
+
+  </div>
+	<p> 
+		{% for order in orders %} 
+
+		<img src="{{order.img.url}}" alt="Image" class="img-fluid"> 
+		<h2 class="font-size-regular"><a href="#">{{order.name}}</a></h2> 
+		<h3>{{order.user}}</h3> 
+		{% if user.is_authenticated %} 
+		<p>{{order.blogdes}}</p> 
+		{% else %} 
+		<p>Register/Login to know more</p> 
+		{% endif %} 
+
+
+		{% endfor %} 
+
+	</p> 
+	</div>
+{% endblock %}
+
