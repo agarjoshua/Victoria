@@ -19,6 +19,9 @@ class Stock(models.Model):
         return str(self.brand) if self.brand else ''
         return self.brand
 
+    def get_absolute_url(self):
+        return reverse('stock', kwargs={'pk': self.pk})
+
 
 class Order(models.Model):
     vendor = models.ForeignKey(Stock, default=1, on_delete = models.SET_NULL, null=True)

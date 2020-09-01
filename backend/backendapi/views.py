@@ -75,7 +75,45 @@ class CreateStock(View):
         data = {
             'stocks': stocks
         }
-        return JsonResponse(data)
+        # return JsonResponse(data)
+        stocks = Stock.objects.all
+        return render(request,'stock.html',{"stocks":stocks})
+
+
+class UpdateStock(View):
+    def  get(self, request):
+        id1 = request.GET.get('id', None)
+        size = request.GET.get('size', None)
+        brand = request.GET.get('brand', None)
+        price = request.GET.get('price', None)
+
+        obj = Stock.objects.get(id=id1)
+        size = size,
+        brand = brand,
+        price = price,
+        obj.save()
+
+        stocks = {'id':obj.id,'size':obj.size,'brand':obj.brand,'price':obj.price}
+
+        data = {
+            'stocks': stocks
+        }
+
+        stocks = Stock.objects.all(id=id1)
+        return render(request,'stock.html',{"stocks":stocks})
+
+class DeleteStock(View):
+    def  get(self, request, pk ,format=None):
+
+        stock = Stock.objects.filter(pk=pk) 
+
+        request.method == 'POST'
+        stock.delete()
+
+        stocks = Stock.objects.all()
+        return render(request,'stock.html',{"stocks":stocks})
+
+
 
 def manage_orders(request):
     orders = Order.objects.all

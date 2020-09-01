@@ -22,6 +22,8 @@
 
     <script src="{% static "js/crud.js" %}"></script>
 
+    
+
 </head>
 
 <body id="page-top">
@@ -198,7 +200,7 @@
           <!-- BUTTON TO TRIGGER THE ACTION -->
           
         
-        <form id="addStock" action="">
+        <form id="" action="{% url 'crud_ajax_create' %}?next={{ request.path }}">
 
           <div class="col-md-6">
           <div class="form-group">
@@ -220,7 +222,7 @@
           <table class="table" id="book-table">
             <thead>
               <tr>
-                
+                <th>id</th>
                 <th>Gas Size</th>
                 <th>Brand</th>
                 <th>Price</th>
@@ -229,42 +231,43 @@
             <tbody>
               {% for stock in stocks %}
                 <tr>
+                 <td>{{ stock.id }}</td>
                   <td>{{ stock.size }}</td>
                   <td>{{ stock.brand }}</td>
                   <td>{{ stock.price }}</td>
                    <td>
-                  <button class="btn btn-success form-control" onClick="editUser({{user.id}})" data-toggle="modal" data-target="#myModal")>EDIT</button>
-                </td>
                 <td align="center">
-                    <button class="btn btn-danger form-control" onClick="deleteUser({{user.id}})">DELETE</button>
+                   <a href="{% url "crud_ajax_delete" pk=stock.id %}?next={{ request.path }} ">
+                    <button type='button' class="btn btn-danger form-control" >DELETE</button>
+                </a>
                 </td>
                 </tr>
                
               {% empty %}
                 <tr>
-                  <td colspan="7" class="text-center bg-warning">No Stock</td>
+                  <td colspan="7" class="text-center bg-warning">There is no stock left unfortunately</td>
                 </tr>
               {% endfor %}
             </tbody>
           </table>
 
           <!-- Modal -->
-          <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          {% comment %} <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"></span>x</button>
                   <h5 class="modal-title" id="myModalLabel">Edit stock</h5>
                 </div>
-                <form id="updateUser" action="">
+                <form id="updateUser" action="{% url 'crud_ajax_update'  %}?next={{ request.path }}">
                 <div class="modal-body">
-                    <input class="form-control" id="form-id" type="hidden" name="formId"/>
+                    <input class="form-control" id="form-id" type="hidden" name="formId" />
                     <label for="name">Gas</label>
-                    <input class="form-control" id="form-name" type="text" name="formName"/>
+                    <input class="form-control" id="form-name" type="text" name="size" placeholder="Price (e.g 800)"/>
                     <label for="address">Size</label>
-                    <input class="form-control" id="form-address" type="text" name="formAddress"/>
+                    <input class="form-control" id="form-address" type="text" name="brand"/>
                     <label for="age">Brand</label>
-                    <input class="form-control" id="form-age" type="number" name="formAge"/>
+                    <input class="form-control" id="form-age" type="text" name="price"/>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary" >Save changes</button>
@@ -272,66 +275,16 @@
                 </div>
                 </form>
               </div>
-            </div>
+            </div> {% endcomment %}
           </div>                           
        </body>
-     
-
-
-      {% block script %}
       
-      <script type="text/javascript">
-
-      // Create Django Ajax Call
-      $("#addStock").submit(function() {
-          var sizeInput = $('input[name="size"]').val().trim();
-          var brandInput = $('input[name="brand"]').val().trim();
-          var priceInput = $('input[name="price"]').val().trim();
-          if (sizeInput && brandInput && priceInput) {
-              // Create Ajax Call
-              $.ajax({
-                  url:"{% url 'crud_ajax_create' %}",
-                  data: {
-                      'size': sizeInput,
-                      'brand': brandInput,
-                      'price': priceInput
-                  },
-                  dataType: 'json',
-                  success: function (data) {
-                      if (data.user) {
-                        appendToUsrTable(data.user);
-                      }
-                        }
-                    });
-                  } else {
-                    alert("All fields must have a valid value.");
-                }
-                $('#addStock').trigger("reset");
-                return false;
-            });
-            
-            function appendToUsrTable(stock) {
-              $("#book-table > tbody:last-child").append(
-                    <tr id="stock-${stock.id}">
-                        <td class="stockSize" name="size">${stock.size}</td>
-                        '<td class="stockBrand" name="brand">${stock.brand}</td>
-                        '<td class="stockPrice" name="price">${stock.price}</td>
-                        '<td align="center">
-                            <button class="btn btn-success form-control" onClick="editStock(${stock.id})" data-toggle="modal" data-target="#myModal">EDIT</button>
-                        </td>
-                        <td align="center">
-                            <button class="btn btn-danger form-control" onClick="deleteStock(${stock.id})">DELETE</button>
-                        </td>
-                    </tr>
-                );
-            }
-            </script>
-
-            {% endblock %}
- 
+         
 
 
-        
+  <!--The javascript for ajax-->
+  <script src="{% static "js/crud.js" %}"></script>
+
   <!-- Bootstrap core JavaScript-->
   <script src="{% static "vendor/jquery/jquery.min.js" %}"></script>
   <script src="{% static "vendor/bootstrap/js/bootstrap.bundle.min.js" %}"></script>
@@ -353,4 +306,53 @@
 
  {% endblock %}
 
- 
+{% block JavaScript %}
+
+          <script>
+
+          // Create Django Ajax Call
+          $("form#addStock").submit(function() {
+              var sizeInput = $('input[name="size"]').val().trim();
+              var brandInput = $('input[name="brand"]').val().trim();
+              var priceInput = $('input[name="price"]').val().trim();
+              if (sizeInput && brandInput && priceInput) {
+              // Create Ajax Call
+              $.ajax({
+                  url:"{% url 'crud_ajax_create' %}",
+                  data: {
+                      'size': sizeInput,
+                      'brand': brandInput,
+                      'price': priceInput
+                  },
+                  dataType: 'json',
+                  success: function (data) {
+                      if (data.stock) {
+                        appendToUsrTable(data.stock);
+                      }
+                        }
+                    });
+                  } else {
+                    alert("All fields must have a valid value.");
+                }
+                $('form#addStock').trigger("reset");
+                return false;
+            });
+            
+            {% comment %} function appendToUsrTable(stock) {
+              $("#book-table > tbody:last-child").append(
+                    <tr id="stock-${stock.id}">
+                        <td class="stockSize" name="size">${stock.size}</td>
+                        '<td class="stockBrand" name="brand">${stock.brand}</td>
+                        '<td class="stockPrice" name="price">${stock.price}</td>
+                        '<td align="center">
+                            <button class="btn btn-success form-control" onClick="editStock(${stock.id})" data-toggle="modal" data-target="#myModal">EDIT</button>
+                        </td>
+                        <td align="center">
+                            <button class="btn btn-danger form-control" onClick="deleteStock(${stock.id})">DELETE</button>
+                        </td>
+                    </tr>
+                );
+            } {% endcomment %}
+            </script>
+
+{% endblock %}

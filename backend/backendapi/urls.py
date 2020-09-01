@@ -35,6 +35,8 @@ urlpatterns = [
     path('accounts/signup', core_views.signup, name='signup'), 
     path('stock', views.manage_stock, name='stock'),
     path('ajax/crud/create',  views.CreateStock.as_view(), name='crud_ajax_create'),
+    path('ajax/crud/update',  views.UpdateStock.as_view(), name='crud_ajax_update'),
+    path('ajax/crud/delete/<int:pk>/',  views.DeleteStock.as_view(), name='crud_ajax_delete'),
     path('orders', views.manage_orders, name='orders'),
 
     #rest-api views
